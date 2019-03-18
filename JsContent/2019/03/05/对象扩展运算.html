@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>对象扩展运算</title>
+</head>
+<body>
+    <script>
+        const man = {
+            name: 'cwq',
+            age: 22
+        }
+        const cpmpany = {
+            name: 'dayu',
+            depart: {
+                name: 'dev'
+            }
+        }
+
+        Object.defineProperty(man, 'sex', {
+            value: 'nan',
+            writable: true,
+            configurable: true
+        })
+
+        console.log(man)    // {name: "cwq", age: 22, sex: "nan"}
+        console.log({...man})   // {name: "cwq", age: 22}
+        
+    </script>
+</body>
+</html>
