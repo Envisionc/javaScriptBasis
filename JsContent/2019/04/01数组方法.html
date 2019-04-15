@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>常见数组方法</title>
+</head>
+<body>
+    <script>
+        // forEach, map, filter, find, sort, some等易错点整理
+        // forEach
+        // forEach 的使用频率使用很高，多用于对数组自身的改变和各元素
+        // ---------------------------------------------------------
+        // 数组去重
+        function foo() {
+            let arr = [1,2,3,3,4,1,5,5,6,7];
+            let list = ['a','b','b','c','d','a','c','d'];
+            let arr1 = list.filter((item,index,list) => {
+                return list.indexOf(item) === index;
+            });
+            console.log(arr1);
+        }
+        foo();
+        
+    </script>
+</body>
+</html>
