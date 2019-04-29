@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>根据后台返回的数组排序</title>
+</head>
+<body>
+    <script>
+        // responseType: 'arraybuffer'
+        var obj = {
+            "2019-04-30": 1,
+            "2019-04-29": 2,
+            "2019-04-28": 3,
+            "2019-04-27": 5,
+            "2019-04-26": 65,
+            "2019-04-25": 87,
+            "2019-04-24": 4,
+            "2019-04-23": 78,
+            "2019-04-22": 22,
+            "2019-04-21": 54,
+            "2019-04-20": 789,
+        }
+        var newKey = Object.keys(obj);
+        console.log("排序前---:",newKey)
+        newKey.forEach((element) => {
+            var cTime = element
+            cTime = cTime.replace(/-/g, '/')
+            var T = new Date(cTime);
+            element = T.getTime()
+        })
+        newKey.sort()
+        console.log("--排序后----:",newKey)
+        var newObj = {};//创建一个新的对象，用于存放排好序的键值对
+        for (var i = 0; i < newKey.length; i++) {//遍历newkey数组
+            newObj[newKey[i]] = obj[newKey[i]];//向新创建的对象中按照排好的顺序依次增加键值对
+        }
+        console.log("排序后---:",newObj)
+    </script>
+</body>
+</html>
