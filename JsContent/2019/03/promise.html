@@ -8,16 +8,30 @@
 </head>
 <body>
     <script>
-        setTimeout(() => {
-            console.log(1);
-        },0);
-        Promise.resolve().then(() => {
-            console.log(2);
-        })
-        console.log(3);
+        function foo1() {
+            setTimeout(() => {
+                console.log(1);
+            },0);
+            Promise.resolve().then(() => {
+                console.log(2);
+            })
+            console.log(3);
+        }
+        // foo1()
         // 打印顺序是： 3, 2, 1
         // 解释是：上述其实是一个Eventloop的问题，main script运行结束后，会有微任务队列(microtask)和宏任务队列(macrotask),
         // 微任务先执行，之后是宏任务
+        // ------------------------------------------------------------------------------------------
+        function foo2() {
+            console.log("script start")
+            setTimeout(() => {
+                console.log("setTimeout")
+            }, 0)
+
+            console.log("script end")
+        }
+        foo2()
+        // 执行顺序：script start ----> script end ----> setTimeout
     </script>
 </body>
 </html>
