@@ -30,8 +30,19 @@
 
             console.log("script end")
         }
-        foo2()
+        // foo2()
         // 执行顺序：script start ----> script end ----> setTimeout
+        
+        var p1 = new Promise(function(resolve, reject) {
+            throw Error('async error')
+        })
+        .then(res => {
+            console.log(res)
+        })
+        .catch(err => {
+            console.log(err)
+        })
+        console.log(p1)
     </script>
 </body>
 </html>
