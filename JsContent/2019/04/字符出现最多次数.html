@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>字符出现最多次数</title>
+</head>
+<body>
+    <script>
+        var str = "aswerdssgddsss";
+        var json = {};
+        for (var i=0; i<str.length; i++) {
+            var char = str.charAt(i);
+            if (json[char]) {
+                json[char] ++;
+            } else {
+                json[char] = 1;
+            }
+        }
+        console.log(json)
+        var iMax = 0;
+        var iIndex = '';
+        for (var key in json) {
+            if (iMax < json[key]) {
+                iMax = json[key];
+            }
+        }
+        for (var key in json) {
+            if (iMax == json[key]) {
+                iMax = json[key];
+            }
+        }
+        console.log("出现次数最多的字符是：" + key)
+        console.log("出现次数最多：" + iMax)
+    </script>
+</body>
+</html>
