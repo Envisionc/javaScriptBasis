@@ -22,6 +22,17 @@
             console.log(arr1);
         }
         foo();
+
+        var obj = {
+            '2': 2,
+            '3': 3,
+            'length': 2,
+            'splice': Array.prototype.splice,
+            'push': Array.prototype.push
+        }
+        obj.push(1)
+        obj.push(2)
+        console.log(obj)
         
     </script>
 </body>
