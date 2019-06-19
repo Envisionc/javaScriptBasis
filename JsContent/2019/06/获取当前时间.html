@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>获取当前时间</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        .box {
+            width: 400px;
+            height: 40px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="box"></div>
+    <script>
+        let box = document.getElementsByClassName('box')
+        
+        // console.log(date)
+        setInterval(function (){
+            splitTime()
+        }, 1000)
+        function splitTime() {
+            let time = new Date()
+            let year = time.getFullYear()
+            let month = time.getMonth() + 1 // getMonth返回值是 0（一月） 到 11（十二月） 之间的一个整数，因此当前月份要加一
+            
+            let day = time.getDate()
+            let h = time.getHours()
+            let m = time.getMinutes()
+            let s = time.getSeconds()
+            h = check(h)
+            m = check(m)
+            s = check(s)
+            let str = year+"-"+month + "-" + day + " " + h + ":" + m + ":" + s
+            box.innerHTML = str
+            // console.log(year+"-"+month + "-" + day + " " + h + ":" + m + ":" + s)
+        }
+        function check(i) {
+            let num
+            i < 10 ? num = "0" + i : num = i
+            return num
+        }
+        // splitTime(date)
+    </script>
+</body>
+</html>
