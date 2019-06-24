@@ -13,19 +13,25 @@
             width: 400px;
             height: 40px;
             border: 1px solid #ccc;
+            line-height: 40px;
+            color: rgb(255, 127, 127);
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <div class="box"></div>
+    
     <script>
-        let box = document.getElementsByClassName('box')
+        
         
         // console.log(date)
-        setInterval(function (){
-            splitTime()
-        }, 1000)
+        window.onload = function () {
+            setInterval(function (){
+                splitTime()
+            }, 1000)
+        }
         function splitTime() {
+            // let box = document.getElementsByTagName('div')
             let time = new Date()
             let year = time.getFullYear()
             let month = time.getMonth() + 1 // getMonth返回值是 0（一月） 到 11（十二月） 之间的一个整数，因此当前月份要加一
@@ -38,8 +44,8 @@
             m = check(m)
             s = check(s)
             let str = year+"-"+month + "-" + day + " " + h + ":" + m + ":" + s
-            box.innerHTML = str
-            // console.log(year+"-"+month + "-" + day + " " + h + ":" + m + ":" + s)
+            // document.getElementsByTagName('div').innerHTML = "<h1>" + year+"-"+month + "-" + day + " " + h + ":" + m + ":" + s + "</h1>"
+            document.write()
         }
         function check(i) {
             let num
@@ -48,5 +54,6 @@
         }
         // splitTime(date)
     </script>
+    <div class="box"></div>
 </body>
 </html>
