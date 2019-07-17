@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>数据转换</title>
+</head>
+<body>
+    <script>
+        let orgList = ["学校", "年级", "班级"];
+        // 转换成
+        // orgList = [
+        //     {
+        //         id: "数组的下标",
+        //         text: "学校"
+        //     },
+        // ]
+        let resultArr = []
+        orgList.forEach((item, index) => {
+            let temp = {
+                id: index,
+                text: item
+            }
+            resultArr.push(temp)
+        })
+        console.log(resultArr)
+    </script>
+</body>
+</html>
