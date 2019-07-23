@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        var myDate = new Date();       
+        var thisYear = myDate.getFullYear();  // 获取当年年份
+        var Section = thisYear - 2008;  // 声明一个变量 获得当前年份至想获取年份差 eg.2008
+        var arrYear = []; // 声明一个空数组 把遍历出的年份添加到数组里
+        for(var i = 0;i<=Section;i++){
+            arrYear.push(thisYear--)
+        } // 遍历并添加年份到数组
+        // arrYear里便是2008年到当前的所有年份了   
+        console.log(arrYear) 
+    </script>
+</body>
+</html>
