@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>获取当前时间在页面上</title>
+</head>
+<body>
+    <script>
+          
+        const date =  new Date();
+        const timesteap =  date.getTime();
+        let y = date.getFullYear();
+        let m = date.getMonth() + 1;
+        m = m > 9 ? m : '0'+ m;
+        let d = date.getDate();
+        d = d > 9 ? d : '0'+ d;
+        let h = date.getHours();
+        let i = date.getMinutes();
+        let s = date.getSeconds();
+        console.log(y); 
+        console.log(m); 
+        console.log(d); 
+        console.log(h); 
+        console.log(i); 
+        console.log(s); 
+    </script>
+</body>
+</html>
