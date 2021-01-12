@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style type="text/css">
+        * {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+            border: 0;
+        }
+
+        .all {
+            width: 590px;
+            height: 470px;
+            padding: 7px;
+            border: 1px solid #ccc;
+            margin: 100px auto;
+            position: relative;
+        }
+
+        .slider {
+            width: 590px;
+            height: 470px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .slider li {
+            width: 590px;
+            height: 470px;
+            overflow: hidden;
+            float: left;
+        }
+
+        .slider ul {
+            position: absolute;
+            left: 0;
+            top: 0px;
+            width: 700%;
+        }
+
+        .all ol {
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+            line-height: 20px;
+            text-align: center;
+        }
+
+        .all ol li {
+            float: left;
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border: 1px solid #ccc;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .all ol li.current {
+            background: yellow;
+        }
+
+        #arr {
+            display: none;
+            z-index: 1000;
+
+        }
+
+        #arr span {
+            width: 40px;
+            height: 40px;
+            position: absolute;
+            left: 5px;
+            top: 50%;
+            margin-top: -20px;
+            background: #000;
+            cursor: pointer;
+            line-height: 40px;
+            text-align: center;
+            font-weight: bold;
+            font-family: '黑体';
+            font-size: 30px;
+            color: #fff;
+            opacity: 0.3;
+            border: 1px solid #fff;
+        }
+
+        #arr #right {
+            right: 5px;
+            left: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="all" id='box'>
+        <div class="slider">
+            <ul>
+                <li><img src="img/ce-01.png" alt="slider" width="590px" height="470px" /></li>
+                <li><img src="img/ce-02.png" alt="slider" width="590px" height="470px" /></li>
+                <li><img src="img/ce-03.png" alt="slider" width="590px" height="470px" /></li>
+                <li><img src="img/ce-04.png" alt="slider" width="590px" height="470px" /></li>
+                <li><img src="img/ce-05.png" alt="slider" width="590px" height="470px" /></li>
+                <li><img src="img/ce-06.png" alt="slider" width="590px" height="470px" /></li>
+            </ul>
+            <ol>
+            </ol>
+        </div>
+        <div id="arr"><span id="left">&lt;</span><span id="right">&gt;</span></div>
+    </div>
+    <script>
+        // 1. 将上面的匀速动画函数复制并改造一下
+        Object.prototype.myAnimate = function (target) {
+            if (this.nodeType !== 1) {
+                console.log('不是元素节点')
+                return;
+            }
+            clearInterval(this.timer)
+            var current = this.offsetLeft
+            var step = target - current > 0 ? 10 : -10;
+            this.timer = setInterval(() => {
+                current = this.offsetLeft
+                this.style.left = current + step + 'px'
+                if (Math.abs(target - current) < Math.abs(step)) {
+                    this.style.left = target + 'px'
+                    clearInterval(this.timer)
+                }
+            }, 10)
+        }
+        // 2.获取和设置后面需要用到的元素
+        var box = document.querySelector('#box')//获取轮播图和按钮的容器
+        var ul = document.querySelector('.slider>ul')//轮播图容器
+        var ol = document.querySelector('.slider>ol')//按钮容器
+        var ulLi = ul.children//获取每个轮播图
+        var sIndex = 0	//控制播放的轮播图的索引值
+        var liIndex = 0	//控制li的当前样式
+        var timer = null//自动轮播时的定时器
+        var arr = document.querySelector('#arr')
+        var arrLeft = document.querySelector('#left')
+        var arrRight = document.querySelector('#right')
+        var imgWidth = ulLi[0].offsetWidth//获取图片的宽度，实现轮播
+        //  3.添加按钮：根据轮播图，创建ol的li按钮
+        for (var i = 0; i < ulLi.length; i++) {
+            var olLi = document.createElement('li')
+            olLi.innerHTML = i + 1
+            if (i == 0) {
+                olLi.classList.add('current')
+            }
+            ol.appendChild(olLi)
+        }
+        // 4.复制第一张图片将其添加到最后，来实现无缝滚动(当前第一张和最后一张的链接)
+        ul.appendChild(ulLi[0].cloneNode(true))
+        // 5.在添加个定时器实现自动播放
+        var olList = ol.children //获取ol的li按钮
+        function autoplay() {
+            // 5.1自动播放主要控制sIndex实现自动轮播
+            // 5.2通过liIndex控制ol选中的样式
+            // 5.3我们要控制sIndex和liIndex，限制在一定的范围
+            // 5.4当轮播图处于最后一张(sIndex=5)，要移动到第一张(sIndex=0),正常移动到复制的第一张(sIndex=6)，但是当复制的第一张(sIndex=6)要移动到第二张(sIndex=1)时，先瞬间定位到第一张(sIndex=0)，在移动到第二张(sIndex=1)
+            // 5.5此刻在控制liIndex，当超出当前索引值，将回到第一个按钮
+            if (sIndex > ulLi.length - 1) {
+                ul.style.left = '0px'
+                sIndex = 1
+            }
+            if (liIndex > olList.length - 1) {
+                liIndex = 0
+            }
+            // 8.3当点击左按钮时，此时如果轮播图处于第一张(sIndex=0),我们瞬间要移动到复制的第一张(sIndex=ulLi.length-1=6),在滚动到最后一张(sIndex=ulLi.length-2=5)
+            if (sIndex < 0) {
+                ul.style.left = -(ulLi.length - 1) * imgWidth + 'px'
+                sIndex = ulLi.length - 2
+            }
+            // 8.4此刻在控制liIndex按钮，当索引值小于0时，回到最后一个
+            if (liIndex < 0) {
+                liIndex = olList.length - 1
+            }
+            document.querySelector('.current').classList.remove('current')
+            olList[liIndex].classList.add('current')
+            ul.myAnimate(-sIndex * imgWidth)
+        }
+        timer = setInterval(function () {
+            this.sIndex++
+            this.liIndex++
+            autoplay()
+        }, 1000)
+        // 6.点击ol的按钮轮播到该索引值对应的时间切换图片
+        for (var i = 0; i < olList.length; i++) {
+            olList[i].setAttribute('index', i)//给每个li设置index，根据index和图片宽度来确定目标位置
+            olList[i].onclick = function () {
+                document.querySelector('.current').classList.remove('current')
+                this.classList.add('current')//点击添加当前选中样式高亮的类
+                liIndex = sIndex = this.getAttribute('index')//因为我们自动播放，所以要始终控制当前ol的li高亮和sIndex全局保持一致，不控制的话，点击完后，sIndex和liIndex没有根据点击选中的发生改变
+                ul.myAnimate(-this.getAttribute('index') * imgWidth)
+            }
+        }
+        // 7.测试看看是否正常播放
+        // 8.控制左右移动
+        // 8.1 经过屏幕，停止自动轮播，左右切换
+        // 8.2 离开屏幕。继续自动轮播，隐藏左右切换
+        // 8.5 点击左右按钮调用autoplay播放
+        box.onmouseenter = function () {
+            clearInterval(timer)
+            arr.style.display = 'block'
+        }
+        box.onmouseleave = function () {
+            timer = setInterval(function () {
+                sIndex++
+                liIndex++
+                autoplay()
+            }, 2000)
+            arr.style.display = 'none'
+        }
+        arrRight.onclick = function () {
+            sIndex++
+            liIndex++
+            autoplay()
+        }
+        arrLeft.onclick = function () {
+            sIndex--
+            liIndex--
+            autoplay()
+        }
+        function getStyle(ele, attr) {
+            if (window.getComputedStyle) {
+                return window.getComputedStyle(ele, null)[attr];
+            }
+            return ele.currentStyle[attr];
+        }
+        function animate(el, json, fn) {
+            clearInterval(el.timer)
+            el.timer = setInterval(function () {
+                var bool = true //当所有的动画完成，我们才可以清除定时器,所以要使用开闭原则
+                for (var attr in json) {
+                    var current = parseInt(getStyle(el, attr))
+                    var step = json[attr] - current > 0 ? 10 : -10;
+                    el.style[attr] = current + step + 'px'
+                    if (Math.abs(json[attr] - current) > Math.abs(step)) {
+                        bool = false //此时所有的动画都未完成
+                        return
+                    }
+                    el.style[attr] = json[attr] + 'px'
+                }
+                if (bool) { //所有动画完成我们才能清除定时器
+                    clearInterval(el.timer)
+                    fn && fn()
+                }
+            }, 10)
+        }
+        // btn1.onclick = function () {
+        //     animate(box, { width: '400', height: '405' }, function () {
+        //         console.log('所有动画完成的回调函数')
+        //     })
+        // }
+    </script>
+</body>
+
+</html>
