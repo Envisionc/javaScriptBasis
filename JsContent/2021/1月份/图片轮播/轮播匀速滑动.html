@@ -27,7 +27,7 @@
             top: 48px;
             left: 0;
             height: 300px;
-            width: 10000px;
+            width: 5600px;
         }
 
         .uls,
@@ -68,8 +68,8 @@
                 <li>
                     这是图片6</li>
             </ul>
-            <ul class="uls2">
-                <ul>
+            <!-- <ul class="uls2">
+                <ul> -->
         </div>
     </div>
     <script src="jquery-1.10.1.min.js"></script>
@@ -79,14 +79,21 @@
             var sizess = $(".uls li").length;
             var sizesspx = sizess * 330;
             var clone = $(".uls").html();
-            $(".uls2").html(clone);
+            // $(".uls2").html(clone);
+            // console.log(clone);
+            var li0 = $(".uls li")[0];
+            $(".uls").append(li0);
+            console.log($(".uls"))
             var t = setInterval(moveL, 30);
 
             //  		封装的动画函数
             function moveL() {
                 i++;
                 var sizess = $(".uls li").length;
-                if (i > sizesspx) {
+                // console.log("sizess", sizess)
+                // console.log("i", i)
+                // console.log("sizesspx", sizesspx)
+                if (i > 400) {
                     $(".box").css({ left: 0 });
                     i = 0
                 }

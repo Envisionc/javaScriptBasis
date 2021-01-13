@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <script src="jquery-1.10.1.min.js"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <h1>jquer实现图片切换</h1>
+        <div id="focus">
+            <ul>
+                <!-- 这里有三个z-index的设置 -->
+                <li>
+                    <img class="switch_pic" src="img/ce-10.png" alt="yoowang">
+                    <!-- <div class="switch_pic"
+                        style="z-index: 3;background: url('img/ce-10.png') center center;background-size: cover;"></div> -->
+                </li>
+                <li>
+                    <img class="switch_pic" src="img/ce-01.png" alt="yoowang">
+                    <!-- <div class="switch_pic"
+                        style="z-index: 2;background: url('img/ce-02.png') center center;background-size: cover;"></div> -->
+                </li>
+                <li>
+                    <img src="img/ce-02.png" alt="yoowang">
+                    <!-- <div class="switch_pic"
+                        style="z-index: 1;background: url('img/ce-03.png') center center;background-size: cover;"></div> -->
+                </li>
+                <li>
+                    <img class="switch_pic" src="img/ce-03.png" alt="yoowang">
+                    <!-- <div class="switch_pic"
+                        style="background: url('img/ce-04.png') center center;background-size: cover;"></div> -->
+                </li>
+                <li>
+                    <img class="switch_pic" src="img/ce-04.png" alt="yoowang">
+                    <!-- <div class="switch_pic"
+                        style="background: url('img/ce-05.png') center center;background-size: cover;"></div> -->
+                </li>
+                <li>
+                    <img class="switch_pic" src="img/ce-05.png" alt="yoowang">
+                    <!-- <div class="switch_pic"
+                        style="background: url('img/ce-06.png') center center;background-size: cover;"></div> -->
+                </li>
+            </ul>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            var sWidth = $("#focus").width();
+            var len = $("#focus ul li").length;
+            var index = 0;
+            var picTimer;
+            var $pics = $("#focus ul li").find('.switch_pic');//获取所有图片
+
+            showPics(index);  //网页打开立即执行一次动画
+            picTimer = setInterval(function () {
+                index++;
+                if (index == len) { index = 0; }
+                showPics(index);
+            }, 3000);//3000毫秒的间隔
+
+            //显示图片函数，根据接收的index值显示相应的内容  
+            function showPics(index) { //普通切换  
+                var nowLeft = -sWidth; //每次移动固定量
+
+                var $pic = $pics.eq(index);//获取当前要移出的图片
+                var $nexPic = $pics.eq((index + 1) % len);//当前要移入的图片
+                var $nexnexPic = $pics.eq((index + 2) % len);//下一个要移入的图片
+                $nexPic.css("left", sWidth);//下一个图片移动到最右
+
+                //当前要移出的图片开始左移，模式设为平滑"linear"，速度和间隔一样
+                $pic.animate({ "left": nowLeft }, 3000, "linear", function () {
+                    // 当前图片完全移出后，重新设置z-index
+                    $pic.css("z-index", 1);
+                    $nexPic.css("z-index", 3);
+                    $nexnexPic.css("z-index", 2);
+                });
+                //当前要移入的图片同时左移
+                $nexPic.animate({ "left": 0 }, 3000, "linear");
+            }
+        });  
+    </script>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-size: 12px;
+            color: #222;
+            font-family: Verdana, Arial, Helvetica, sans-serif;
+            background: #f0f0f0;
+        }
+
+        .clearfix:after {
+            content: ".";
+            display: block;
+            height: 0;
+            clear: both;
+            visibility: hidden;
+        }
+
+        .clearfix {
+            zoom: 1;
+        }
+
+        ul,
+        li {
+            list-style: none;
+        }
+
+        img {
+            border: 0;
+        }
+
+        .wrapper {
+            width: 800px;
+            margin: 0 auto;
+            padding-bottom: 50px;
+        }
+
+        h1 {
+            height: 50px;
+            line-height: 50px;
+            font-size: 22px;
+            font-weight: normal;
+            font-family: "Microsoft YaHei", SimHei;
+            margin-bottom: 20px;
+        }
+
+        #focus {
+            width: 450px;
+            height: 350px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #focus ul {
+            height: 380px;
+            position: absolute;
+        }
+
+        #focus ul li {
+            float: left;
+            width: 450px;
+            height: 350px;
+            overflow: hidden;
+            position: absolute;
+            background: #000;
+            margin-right: 10px;
+        }
+
+        #focus ul li .switch_pic {
+            position: absolute;
+            overflow: hidden;
+            width: 450px;
+            height: 350px;
+        }
+    </style>
+</body>
