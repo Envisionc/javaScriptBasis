@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      .product-list {
+        width: 700px;
+        height: 3500px;
+        float: left;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+        align-content: space-around;
+      }
+
+      .cart {
+        width: 770px;
+        height: 785px;
+        position: fixed;
+        overflow-y: scroll;
+        top: 10px;
+        right: 10px;
+        border: 1px solid gray;
+      }
+
+      .product-list div {
+        width: 280px;
+        height: 343px;
+        float: left;
+        margin-left: 38px;
+        overflow: hidden;
+        margin-bottom: 20px;
+        border: 1px solid #c2c2c2;
+      }
+
+      .product-list div:hover {
+        box-shadow: 0px 0px 15px rgb(199, 198, 198);
+      }
+
+      .product-list div p {
+        color: #4c4c4c;
+        font-size: 14px;
+        text-align: center;
+      }
+
+      .product-list div span {
+        color: #999999;
+        font-size: 12px;
+        display: block;
+        text-align: center;
+      }
+
+      .cart-title {
+        margin-bottom: 10px;
+        font-size: 16px;
+        border-bottom: 1px solid #aed2ff;
+        line-height: 40px;
+        height: 40px;
+        font-weight: 700;
+        text-align: center;
+        color: #333;
+        font-family: "Microsoft YaHei";
+      }
+
+      .cart-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 15px;
+        font-family: Verdana, "Microsoft YaHei";
+        color: #333;
+      }
+
+      .cart-table th {
+        border-bottom: 2px solid #b2d1ff;
+        font-weight: normal;
+        height: 50px;
+        line-height: 50px;
+      }
+
+      .cart-item {
+        background-color: #fafcff;
+        border-bottom: 1px dotted #84b3fd;
+      }
+
+      .cart-item td {
+        height: 100px;
+        text-align: center;
+      }
+
+      .cart-item .cart-txt-left {
+        text-align: left;
+      }
+
+      .cart-name {
+        color: #4c4c4c;
+        font-weight: bold;
+      }
+
+      .cart-subtotal {
+        color: #ff3334;
+        font-weight: bold;
+      }
+
+      .cart-reduce,
+      .cart-add {
+        display: inline-block;
+        width: 20px;
+        height: 16px;
+        line-height: 16px;
+        color: #fff;
+        background-color: #bdbdbd;
+        border: 0;
+        cursor: pointer;
+        border-radius: 2px;
+        font-family: "Arial";
+        font-size: 16px;
+      }
+
+      .cart-reduce:hover,
+      .cart-add:hover {
+        background-color: #ff9900;
+      }
+
+      .cart-num {
+        margin: 5px;
+        width: 36px;
+        text-align: center;
+        height: 20px;
+        line-height: 20px;
+        padding: 0 3px;
+        display: inline-block;
+        background: #fff;
+        border: 1px solid #bbb;
+      }
+
+      .cart-del,
+      .select-all {
+        color: #ff6600;
+      }
+
+      .cart-del:hover,
+      .select-all:hover,
+      .cart-check:hover {
+        cursor: pointer;
+      }
+
+      .cart-bottom {
+        height: 55px;
+        text-align: right;
+      }
+
+      .cart-bottom .select-all {
+        position: relative;
+        top: 1px;
+      }
+
+      .cart-total-price {
+        color: #ff3334;
+        font-weight: bold;
+        font-size: 19px;
+      }
+
+      .cart-bottom-btn {
+        color: #fff;
+        font-size: 19px;
+        font-weight: 600;
+        cursor: pointer;
+        margin: 0 10px;
+        background: #fe8502;
+        border: 1px solid #ff6633;
+        border-radius: 5px 5px 5px 5px;
+        padding: 10px 20px;
+      }
+
+      .cart-bottom-btn:hover {
+        background: #ff6600;
+      }
+
+      .add-to-cart:hover {
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="product-list"></div>
+    <div class="cart">
+      <div class="cart-title">我的购物车</div>
+      <table class="cart-table">
+        <thead>
+          <th width="60"><span class="select-all">全选</span></th>
+          <th>商品</th>
+          <th width="120">单价</th>
+          <th width="100">数量</th>
+          <th width="120">小计</th>
+          <th width="80">操作</th>
+        </thead>
+        <tbody>
+          <tr class="cart-item">
+            <td>
+              <input
+                class="cart-check"
+                type="checkbox"
+                checked
+                style="display: none"
+              />
+            </td>
+            <td class="cart-txt-left">
+              <span class="cart-name">购物车竟然是空的</span>
+            </td>
+            <td style="display: none"><span class="cart-price">0</span></td>
+            <td style="display: none">
+              <span class="cart-reduce">-</span><span class="cart-num">0</span
+              ><span class="cart-add">+</span>
+            </td>
+            <td style="display: none"><span class="cart-subtotal">0</span></td>
+            <td style="display: none"><span class="cart-del">删除</span></td>
+          </tr>
+          <tr class="cart-bottom">
+            <td colspan="6">
+              <span class="cart-bottom-span"
+                >已选择 <span class="cart-total-num">0</span> 件商品</span
+              >
+              <span class="cart-bottom-span"
+                >合计：<span class="cart-total-price">0</span></span
+              >
+              <span class="cart-bottom-btn">结算</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <script>
+      // 使用面向对象
+      function Cart() {
+        // 购物车表格的tbody元素
+        this.tbody = document.querySelector("tbody");
+        this.empty = true;
+        // 当加入购物车时，购物车里是否有相同商品
+        this.repeat = false;
+        //是否有商品正在加入购物车，我做了一个效果，所以需要这个限制，以免出现bug
+        this.bool = true;
+        // 加入购物车按钮的span数组
+        Array.from(document.querySelectorAll(".add-to-cart")).forEach(
+          (span) => {
+            // 移入移出效果
+            span.onmouseover = () => (span.style.backgroundColor = "#FF6600");
+            span.onmouseout = () => (span.style.backgroundColor = "orange");
+            // 加入购物车点击事件
+            span.onclick = () => {
+              if (this.bool) {
+                this.bool = false;
+                // 获取div里的数据
+                var div = span.parentNode;
+                var image = div.firstElementChild.innerHTML;
+                var name = div.children[1].innerText;
+                var version = div.children[2].innerText;
+                var color = div.children[3].innerText;
+                var price = div.children[4].children[0].innerText;
+                var good = image + name + version + color;
+                // 正在加入购物车的商品
+                this.good = {
+                  name: good,
+                  price,
+                  num: 1,
+                };
+                for (var i = 0; i < this.tbody.children.length - 1; i++) {
+                  if (
+                    good ===
+                    this.tbody.children[i].children[1].firstElementChild
+                      .innerHTML
+                  ) {
+                    this.i = i;
+                    this.repeat = true;
+                    break;
+                  }
+                }
+                // 调用商品移动效果的函数
+                this.move(span, 25 - window.event.offsetY);
+              }
+            };
+          }
+        );
+        // 全选按钮点击事件
+        document.querySelector(".select-all").onclick = () => {
+          var bool = false;
+          for (var i = 0; i < this.tbody.children.length - 1; i++) {
+            if (
+              !this.tbody.children[i].firstElementChild.firstElementChild
+                .checked
+            ) {
+              bool = true;
+              break;
+            }
+          }
+          for (var i = 0; i < this.tbody.children.length - 1; i++) {
+            this.tbody.children[i].firstElementChild.firstElementChild.checked =
+              bool;
+          }
+          this.count();
+        };
+        this.noneItem = this.tbody.children[0].cloneNode(true);
+      }
+      // 改变购物车列表的函数
+      Cart.prototype.changeCart = function () {
+        var item = this.tbody.children[0];
+        if (this.empty) {
+          this.tbody.removeChild(item);
+          this.empty = false;
+        }
+        this.cartBottom = this.tbody.children[this.tbody.children.length - 1];
+        ((ele) => {
+          var tds = ele.children;
+          tds[0].firstElementChild.style.display = "inline-block";
+          [2, 3, 4, 5].forEach((v) => {
+            tds[v].style.display = "table-cell";
+          });
+          tds[0].firstChild.onclick = () => this.count();
+          tds[1].firstChild.innerHTML = this.good.name;
+          tds[2].firstChild.innerText = this.good.price;
+          tds[3].children[0].onclick = () => {
+            if (tds[3].children[1].innerText > 1) {
+              tds[3].children[1].innerText--;
+              this.eleprice(tds);
+              this.count();
+            }
+          };
+          tds[3].children[1].innerText = this.good.num;
+          tds[3].children[2].onclick = () => {
+            tds[3].children[1].innerText++;
+            this.eleprice(tds);
+            this.count();
+          };
+          this.eleprice(tds);
+          tds[5].firstChild.onclick = () => {
+            this.tbody.removeChild(ele);
+            this.count();
+            if (this.tbody.children.length === 1) {
+              this.tbody.insertBefore(this.noneItem, this.cartBottom);
+              this.empty = true;
+            }
+          };
+          this.tbody.insertBefore(ele, this.cartBottom);
+        })(item.cloneNode(true));
+        this.count();
+      };
+      // 额外封装的函数，减少代码重复
+      Cart.prototype.eleprice = function (tds) {
+        tds[4].firstChild.innerText = (
+          this.good.price * tds[3].children[1].innerText
+        ).toFixed(2);
+      };
+      // 计算总价格的函数
+      Cart.prototype.count = function () {
+        var num = 0;
+        var price = 0;
+        for (var i = 0; i < this.tbody.children.length; i++) {
+          if (
+            this.tbody.children[i].firstElementChild.firstElementChild.checked
+          ) {
+            num += parseInt(
+              this.tbody.children[i].children[3].children[1].innerText
+            );
+            price += parseFloat(
+              this.tbody.children[i].children[4].firstElementChild.innerText
+            );
+          }
+        }
+        this.cartBottom.firstElementChild.firstElementChild.firstElementChild.innerText =
+          num;
+        this.cartBottom.firstElementChild.children[1].firstElementChild.innerText =
+          price.toFixed(2);
+      };
+      // 封装好的动画函数
+      Cart.prototype.animate = function (ele, obj, fn) {
+        var k = 0;
+        for (let key in obj) {
+          k++;
+          let target = obj[key];
+          let l = parseInt(getComputedStyle(ele)[key]);
+          let timer = setInterval(function () {
+            var speed = (target - l) * 0.08;
+            l += speed;
+            ele.style[key] = l + "px";
+            if (Math.abs(speed) < 0.1) {
+              clearInterval(timer);
+              if (--k === 0 && fn) fn();
+            }
+          }, 16);
+        }
+      };
+      // 设置样式的函数
+      Cart.prototype.setStyle = function (ele, styleObj) {
+        for (var key in styleObj) {
+          ele.style[key] = styleObj[key];
+        }
+      };
+      // 商品移动效果的函数
+      Cart.prototype.move = function (span, dt) {
+        var img = span.parentNode.firstElementChild.firstElementChild;
+        var _img = img.cloneNode(true);
+        var t = 0;
+        if (this.empty) t = (this.tbody.children.length - 2) * 190 + 114;
+        else t = (this.tbody.children.length - 1) * 190 + 114;
+        this.setStyle(_img, {
+          position: "fixed",
+          top: window.event.clientY + dt - 308 + "px",
+          left: img.offsetLeft + "px",
+        });
+        document.body.appendChild(_img);
+        if (this.repeat) {
+          this.repeat = false;
+          this.animate(
+            _img,
+            {
+              top: this.i * 190 + 114,
+              // 每台电脑的可视窗口可能不一样，或者浏览器可视窗口的放大缩小，使得水平位置不对应
+              left: 856,
+            },
+            () => {
+              this.bool = true;
+              document.body.removeChild(_img);
+              this.tbody.children[this.i].children[3].children[2].onclick();
+            }
+          );
+        } else
+          this.animate(
+            _img,
+            {
+              top: t,
+              left: 856,
+            },
+            () => {
+              this.bool = true;
+              document.body.removeChild(_img);
+              this.changeCart();
+            }
+          );
+      };
+      // 配合promise发送ajax请求
+      new Promise((resolve, reject) => {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            //xhr.responseText为json格式的数组
+            //res为js数组，每个元素是一个商品
+            var res = JSON.parse(xhr.responseText);
+            // 虚拟的节点对象
+            var frag = document.createDocumentFragment();
+            res.forEach((v) => {
+              // 创建div，并将相应字符串渲染在div上
+              var div = document.createElement("div");
+              div.innerHTML = `<p><img style="width:160px;height:130px;display: block;margin: 0 auto;margin-top: 20px;transition: all .2s;"
+            src="../images/${v.p_img_1}" alt=""></p>
+            <p style="margin-top: 20px;font-weight: bold">${v.p_name}</p>
+            <span style="margin-top: 10px;">${v.p_version}</span>
+            <span style="margin-top: 10px;">${v.p_color}</span>
+            <p style="font-size: 12px;color: #999999;margin-top: 30px;">RMB <span
+            style="color: #c91111;display: inline;font-weight: bold">${v.p_price1}</span></p>
+            <span class="add-to-cart"
+            style="margin:auto;background-color:orange;width:90px;height:25px;border-radius:10px;line-height:25px;color:white;font-size:14px;">加入购物车</span>`;
+              //给文档碎片添加div
+              frag.appendChild(div);
+            });
+            //将文档碎片添加到商品列表
+            document.querySelector(".product-list").appendChild(frag);
+            resolve();
+          }
+        };
+        //post请求，请求地址，异步
+        xhr.open("post", "/", true);
+        xhr.send();
+      }).then(() => {
+        // 此时，document.querySelector(".product-list")是最新的，也就是说promise把异步变成同步了
+        /* new 构造函数():
+       1、创建空对象
+       2、将this指向这个空对象，将构造函数的原型赋值给这个空对象的原型
+       3、执行函数中的代码
+       4、返回这个对象*/
+        new Cart();
+      });
+    </script>
+  </body>
+</html>

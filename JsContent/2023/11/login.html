@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>登录页面</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+      }
+      .container {
+        width: 300px;
+        padding: 16px;
+        background-color: white;
+        margin: 100px auto;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      input[type="text"],
+      input[type="password"] {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+      }
+      button {
+        background-color: #4caf50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+      }
+      button:hover {
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <label for="uname"><b>用户名</b></label>
+      <input
+        type="text"
+        placeholder="输入用户名"
+        name="uname"
+        id="uname"
+        required
+      />
+      <span id="uname_error" style="color: red"></span>
+      <br /><br />
+      <label for="psw"><b>密码</b></label>
+      <input
+        type="password"
+        placeholder="输入密码"
+        name="psw"
+        id="psw"
+        required
+      />
+      <span id="psw_error" style="color: red"></span>
+      <br /><br />
+      <button type="submit" onclick="login()">登录</button>
+    </div>
+    <script>
+      function login() {
+        var uname = document.getElementById("uname").value;
+        var psw = document.getElementById("psw").value;
+        var uname_error = document.getElementById("uname_error");
+        var psw_error = document.getElementById("psw_error");
+        uname_error.innerHTML = ""; //清空错误信息
+        psw_error.innerHTML = ""; //清空错误信息
+        var uname_pattern = /^[\u4e00-\u9fa5]{2,20}$/; //用户名不能为中文且字符长度6-20位的正则表达式
+        var psw_pattern =
+          /^(?![a-zA-Z]+$)(?![A-Z\d]+$)(?![^\da-zA-Z]+$)[^\da-zA-Z\d]{8,20}$/; //密码不能为中文且包含大写字母，小写字母，数字，特殊符号四种里面的三种，长度8-20位的正则表达式
+        if (!uname_pattern.test(uname)) {
+          //验证用户名是否符合要求，不符合则显示错误信息并返回false，不再执行后面的代码
+          uname_error.innerHTML = "用户名不能为中文且字符长度6-20位";
+          return false;
+        } else if (!psw_pattern.test(psw)) {
+          //验证密码是否符合要求，不符合则显示错误信息并返回false，不再执行后面的代码
+          psw_error.innerHTML =
+            "密码不能为中文且包含大写字母，小写字母，数字，特殊符号四种里面的三种，长度8-20位";
+          return false;
+        } else {
+          //如果用户名和密码都符合要求，则弹出登录成功的提示框并返回true，表示登录成功
+          alert("登录成功");
+          return true;
+        }
+      }
+    </script>
+  </body>
+</html>
