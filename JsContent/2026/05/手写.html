@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <script>
+        // 手写Promise
+        // class MyPromise {
+        //     constructor(executor) {
+        //         this.state = 'pending';
+        //         this.value = undefined;
+        //         this.reason = undefined;
+        //         this.onFulfilledCallbacks = [];
+        //         this.onRejectedCallbacks = [];
+        //     }
+        //     then(onFulfilled, onRejected) {
+        //         if (this.state === 'pending') {
+        //             this.onFulfilledCallbacks.push(onFulfilled);
+        //             this.onRejectedCallbacks.push(onRejected);
+        //         }
+        //         if (this.state === 'fulfilled') {
+        //             onFulfilled(this.value);
+        //         }
+        //         if (this.state === 'rejected') {
+        //             onRejected(this.reason);
+        //         }
+        //     }
+        // }
+        // const promise = new MyPromise((resolve, reject) => {
+        //     resolve('success');
+        //     reject('error');
+        // });
+        // promise.then(res => {
+        //     console.log(res);
+        // }, err => {
+        //     console.log(err);
+        // });
+        // console.log(promise);
+        const promise = new Promise((resolve, reject) => {
+            resolve('success');
+            reject('error');
+        });
+        promise.then(res => {
+            setTimeout(() => {
+                console.log(res);
+            }, 1000);
+            console.log('then1');
+            return 'then2';
+        }, err => {
+            console.log(err);
+        }).then(res => {
+            console.log(res);
+        }, err => {
+            console.log(err);
+        });
+        // console.log(promise);
+        // console.log('script end');
+
+        const ary = [1,2,3];
+        const ary2 = [...ary];
+        ary[0] = 2;
+        
+        ary.push(4); // 在数组后面添加一个元素，返回新数组长度  (原数组改变)
+        ary.pop(); // 删除数组最后一个元素，返回删除的元素  (原数组改变)
+        ary2.unshift(1); // 在数组前面添加一个元素，返回新数组长度  (原数组改变)
+        ary2.shift(); // 删除数组第一个元素，返回删除的元素  (原数组改变)
+
+        console.log(ary);
+        console.log(ary2);
+        console.log(ary === ary2);
+    </script>
+</body>
+</html>

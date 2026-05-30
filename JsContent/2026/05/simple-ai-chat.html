@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>我的第一个AI小助手</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .chat-container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 85vh;
+        }
+        .chat-header {
+            background: #2d3748;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        .messages-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            background: #f8fafc;
+        }
+        .message {
+            display: flex;
+            flex-direction: column;
+            max-width: 85%;
+        }
+        .user-message { align-self: flex-end; }
+        .assistant-message { align-self: flex-start; }
+        .message-bubble {
+            padding: 12px 16px;
+            border-radius: 24px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+        .user-message .message-bubble {
+            background: #2d3748;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        .assistant-message .message-bubble {
+            background: white;
+            color: #1e293b;
+            border: 1px solid #e2e8f0;
+            border-bottom-left-radius: 4px;
+        }
+        .input-area {
+            display: flex;
+            padding: 16px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            gap: 12px;
+        }
+        #userInput {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 40px;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.2s;
+        }
+        #userInput:focus { border-color: #2d3748; box-shadow: 0 0 0 2px rgba(45,55,72,0.2); }
+        #sendBtn {
+            background: #2d3748;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            padding: 0 24px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        #sendBtn:hover { background: #1e293b; transform: scale(1.02);}
+        #sendBtn:disabled { background: #94a3b8; cursor: not-allowed; transform: none; }
+        .loading { opacity: 0.6; }
+        .error-bubble {
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+    </style>
+</head>
+<body>
+<div class="chat-container">
+    <div class="chat-header">
+        🤖 我的第一个AI助手
+    </div>
+    <div class="messages-area" id="messagesArea">
+        <div class="message assistant-message">
+            <div class="message-bubble">
+                你好！我是你的AI小助手。试着问我一个问题吧～<br>
+                （使用 Pollinations 免费 API，无需 Key；首次回复可能需等待约 10～60 秒）
+            </div>
+        </div>
+    </div>
+    <div class="input-area">
+        <input type="text" id="userInput" placeholder="输入你的问题..." autocomplete="off">
+        <button id="sendBtn">发送</button>
+    </div>
+</div>
+
+<script>
+    // Pollinations 免费文本 API（OpenAI 兼容，浏览器可直接调用，支持 CORS）
+    const FREE_API_URL = 'https://api.deepseek.com/v1/chat/completions';
+    
+    // 获取DOM元素
+    const messagesArea = document.getElementById('messagesArea');
+    const userInput = document.getElementById('userInput');
+    const sendBtn = document.getElementById('sendBtn');
+    
+    // 对话历史
+    let conversationHistory = [
+        { role: 'system', content: '你是一个友好的前端开发助手，回答应该简洁、准确、积极。' }
+    ];
+    
+    // 添加消息到界面
+    function addMessage(content, role) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${role === 'user' ? 'user-message' : 'assistant-message'}`;
+        
+        const bubbleDiv = document.createElement('div');
+        bubbleDiv.className = 'message-bubble';
+        bubbleDiv.textContent = content;
+        
+        messageDiv.appendChild(bubbleDiv);
+        messagesArea.appendChild(messageDiv);
+        messagesArea.scrollTop = messagesArea.scrollHeight;
+        
+        return messageDiv;
+    }
+    
+    // 显示或隐藏加载状态
+    function setLoading(isLoading) {
+        sendBtn.disabled = isLoading;
+        if (isLoading) {
+            const loadingMsg = addMessage('🤔 正在思考中，请稍候（约 10～60 秒）...', 'assistant');
+            loadingMsg.id = 'loading-message';
+        } else {
+            const loadingMsg = document.getElementById('loading-message');
+            if (loadingMsg) loadingMsg.remove();
+        }
+    }
+    
+    // 显示错误
+    function showError(errorMsg) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'message assistant-message';
+        const bubbleDiv = document.createElement('div');
+        bubbleDiv.className = 'message-bubble error-bubble';
+        bubbleDiv.textContent = `❌ 出了点小问题: ${errorMsg}。但这很正常，我们再试一次？`;
+        errorDiv.appendChild(bubbleDiv);
+        messagesArea.appendChild(errorDiv);
+        messagesArea.scrollTop = messagesArea.scrollHeight;
+    }
+    
+    // 发送消息并调用AI
+    async function sendMessage() {
+        const userMessage = userInput.value.trim();
+        if (!userMessage) return;
+        
+        // 显示用户消息
+        addMessage(userMessage, 'user');
+        userInput.value = '';
+        
+        conversationHistory.push({ role: 'user', content: userMessage });
+        
+        setLoading(true);
+        
+        try {
+            // 替换成你自己的 API Key
+            const API_KEY = 'sk-dfe75ae7cfcf48589bd6c9dd91c1fd7e';  // ← 这里填你申请到的完整密钥
+            
+            const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${API_KEY}`  // ← 关键：这行之前可能缺失或格式不对
+                },
+                body: JSON.stringify({
+                    model: 'deepseek-chat',
+                    messages: conversationHistory,
+                    max_tokens: 500,
+                    temperature: 0.7
+                })
+            });
+            
+            if (!response.ok) {
+                // 这里可以打印更详细的错误信息
+                const errorText = await response.text();
+                console.error('API错误详情:', errorText);
+                throw new Error(`API请求失败 (${response.status}): ${errorText}`);
+            }
+            
+            const data = await response.json();
+            const assistantReply = data.choices[0].message.content;
+            
+            addMessage(assistantReply, 'assistant');
+            conversationHistory.push({ role: 'assistant', content: assistantReply });
+            
+        } catch (error) {
+            console.error('调用API时出错:', error);
+            const fallbackReply = `API调用出错了: ${error.message}。请检查网络或API Key是否正确。`;
+            addMessage(fallbackReply, 'assistant');
+            showError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+    
+    // 绑定事件
+    sendBtn.addEventListener('click', sendMessage);
+    userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !sendBtn.disabled) sendMessage();
+    });
+    
+    // 初始欢迎语不需要再次加入历史，只是UI展示
+</script>
+</body>
+</html>

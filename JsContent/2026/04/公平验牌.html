@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公平验牌</title>
+</head>
+<body>
+    <script>    
+        // 公平验牌
+        const fair = (player, banker) => {
+            return player + banker === 9 ? '平局' : player + banker > 9 ? '玩家赢' : ' banker赢';
+        }
+
+        console.log(fair(1, 2));
+        console.log(fair(2, 2));
+        console.log(fair(3, 2));
+        console.log(fair(4, 2));
+        console.log(fair(5, 2));
+        console.log(fair(6, 2));
+        console.log(fair(7, 2));
+        console.log(fair(8, 2));
+        console.log(fair(9, 2));
+    </script>
+</body>
+</html>

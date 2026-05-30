@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promise</title>
+</head>
+<body>
+    <script>
+        class MyPromise {
+            constructor(executor) {
+                this.state = "pending";
+                this.value = undefined;
+                this.reason = undefined;
+                this.onFulfilledCallbacks = [];
+                this.onRejectedCallbacks = [];
+
+                const resolve = (value) => {
+                    if (this.state !== "pending") return;
+                    this.state = "fulfilled";
+                    this.value = value;
+                    this.onFulfilledCallbacks.forEach((fn) => fn());
+                };
+
+                const reject = (reason) => {
+                    if (this.state !== "pending") return;
+                    this.state = "rejected";
+                    this.reason = reason;
+                    this.onRejectedCallbacks.forEach((fn) => fn());
+                };
+
+                try {
+                    executor(resolve, reject);
+                } catch (error) {
+                    reject(error);
+                }
+            }
+
+            then(onFulfilled, onRejected) {
+                onFulfilled = typeof onFulfilled === "function" ? onFulfilled : (value) => value;
+                onRejected = typeof onRejected === "function" ? onRejected : (reason) => {
+                    throw reason;
+                };
+
+                const promise2 = new MyPromise((resolve, reject) => {
+                    const runFulfilled = () => {
+                        setTimeout(() => {
+                            try {
+                                const x = onFulfilled(this.value);
+                                this.resolvePromise(promise2, x, resolve, reject);
+                            } catch (error) {
+                                reject(error);
+                            }
+                        }, 0);
+                    };
+
+                    const runRejected = () => {
+                        setTimeout(() => {
+                            try {
+                                const x = onRejected(this.reason);
+                                this.resolvePromise(promise2, x, resolve, reject);
+                            } catch (error) {
+                                reject(error);
+                            }
+                        }, 0);
+                    };
+
+                    if (this.state === "fulfilled") runFulfilled();
+                    if (this.state === "rejected") runRejected();
+                    if (this.state === "pending") {
+                        this.onFulfilledCallbacks.push(runFulfilled);
+                        this.onRejectedCallbacks.push(runRejected);
+                    }
+                });
+
+                return promise2;
+            }
+
+            catch(onRejected) {
+                return this.then(null, onRejected);
+            }
+
+            resolvePromise(promise2, x, resolve, reject) {
+                if (promise2 === x) {
+                    return reject(new TypeError("Chaining cycle detected"));
+                }
+
+                if (x instanceof MyPromise) {
+                    return x.then(resolve, reject);
+                }
+
+                resolve(x);
+            }
+
+            static resolve(value) {
+                return new MyPromise((resolve) => resolve(value));
+            }
+
+            static reject(reason) {
+                return new MyPromise((_, reject) => reject(reason));
+            }
+        }
+
+        // 示例 1：异步成功
+        const p1 = new MyPromise((resolve) => {
+            setTimeout(() => resolve("请求成功：拿到用户信息"), 1000);
+        });
+
+        p1.then((res) => {
+            console.log("示例1:", res);
+            return res + " -> 再处理一层";
+        }).then((res2) => {
+            console.log("示例1 链式:", res2);
+        });
+
+        // 示例 2：异常捕获
+        const p2 = new MyPromise(() => {
+            throw new Error("执行器里抛错");
+        });
+
+        p2.catch((err) => {
+            console.log("示例2:", err.message);
+        });
+
+        // 示例 3：手动失败
+        const p3 = new MyPromise((_, reject) => {
+            reject("网络超时");
+        });
+
+        p3.then(null, (reason) => {
+            console.log("示例3:", reason);
+        });
+    </script>
+</body>
+</html>
